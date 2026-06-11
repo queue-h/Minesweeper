@@ -1,6 +1,6 @@
 import numpy as np
 
-class Play_Board:
+class GameBoard():
     global _board, _size, _NUM_BOMBS
 
     def __init__(self, size):
@@ -67,20 +67,10 @@ class Play_Board:
 
         return bomb_list
 
-    # print board
-    def __str__(self):
-        board_str = ""
-        for r in range(self._size):
-            for c in range(self._size):
-                board_str += '%3d' %(self._board[r][c])
-            board_str += "\n"
-        return board_str
-
 # run
 def main():
-    board = Play_Board(10)
+    board = GameBoard(10)
     board.generate_board()
     print(board)
 
-main()
 
