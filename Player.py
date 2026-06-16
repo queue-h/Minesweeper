@@ -37,19 +37,17 @@ class Player:
         else:
             self.display_board[x][y] = 0
         # search up
-        if y - 1 >= 0 and self._board[x][y - 1] == '#':
-            return self.uncover_zeroes(x, y - 1)
+        if y - 1 >= 0 and self.display_board[x][y - 1] == '#':
+            self.uncover_zeroes(x, y - 1)
         # search down
-        if y + 1 < self.board_size and self._board[x][y + 1] == '#':
-            return self.uncover_zeroes(x, y + 1)
+        if y + 1 < self.board_size and self.display_board[x][y + 1] == '#':
+            self.uncover_zeroes(x, y + 1)
         # search left
-        if x - 1 >= 0 and self._board[x - 1][y] == '#':
-            return self.uncover_zeroes(x - 1, y)
+        if x - 1 >= 0 and self.display_board[x - 1][y] == '#':
+            self.uncover_zeroes(x - 1, y)
         # search right
-        if x + 1 < self.board_size and self._board[x + 1][y] == '#':
-            return self.uncover_zeroes(x + 1, y)
-
-        return
+        if x + 1 < self.board_size and self.display_board[x + 1][y] == '#':
+            self.uncover_zeroes(x + 1, y)
 
     # print board
     def __str__(self):

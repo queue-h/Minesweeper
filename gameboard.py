@@ -7,7 +7,7 @@ class GameBoard():
         if (not isinstance(size, int)) or size == 0:
             raise SyntaxError("Size must be a non-zero integer")
         self._size = size
-        self._NUM_BOMBS = self._size * 4
+        self._NUM_BOMBS = self._size * 5
 
     def generate_board(self):
         self._board = np.zeros((self._size, self._size))
