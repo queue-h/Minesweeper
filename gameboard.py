@@ -10,7 +10,7 @@ class GameBoard():
         self._NUM_BOMBS = self._size * 5
 
     def generate_board(self):
-        self._board = np.zeros((self._size, self._size))
+        self._board = np.zeros((self._size, self._size)).astype(int)
 
         # set bombs
         bomb_list = self.get_bomb_list()

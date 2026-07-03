@@ -1,6 +1,3 @@
-from ctypes.wintypes import SIZE
-from unittest import case
-
 from gameboard import GameBoard
 import numpy as np
 
