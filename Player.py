@@ -1,6 +1,7 @@
 from gameboard import GameBoard
 import numpy as np
 
+# most, if not all, of this will need to be moved to game.py
 class Player:
     board_size = 10
     # create new gameboard object
