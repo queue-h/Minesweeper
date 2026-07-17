@@ -15,7 +15,7 @@ class Player:
         # generate the board
         self._board = self._board.generate_board()
 
-    # if the player's first click is on a bomb, sucks to suck
+    # if the player's first click is on a bomb, sucks to suckkkkk
     # ill fix it later
     def player_click(self, x, y):
         match self._board[x][y]:
