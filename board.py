@@ -23,7 +23,7 @@ class Board:
             for c in range(self.size):
                 # zero is a placeholder
                 # i think i will need to set status post-init
-                temp_row.append(Tile(r, c, 0))
+                temp_row.append(Tile(r, c))
             self.matrix.append(temp_row)
 
     def set_statuses(self):
@@ -62,6 +62,16 @@ class Board:
                 # generate a random number, and if it is less than bomb_freq, change tile status to bomb (-1)
                 if random.random() < self.bomb_freq:
                     self.matrix[r][c].set_status(-1)
+
+    # return status of the tile
+    def get_status(self, r, c):
+        return self.matrix[r][c].status
+
+    def get_rect(self, r, c):
+        return self.matrix[r][c].rect
+
+    def get_tile(self, r, c):
+        return self.matrix[r][c]
 
 
 def main():
