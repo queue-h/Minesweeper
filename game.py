@@ -65,7 +65,8 @@ class Game:
             # will check for player click and then pass to method somewhere here
             left, middle, right = pygame.mouse.get_pressed()
             if left:
-                tile_clicked = self.board.determine_tile_click(pygame.mouse.get_pos())
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                tile_clicked = self.board.determine_tile_click(mouse_x, mouse_y)
                 if tile_clicked is not None:
                     self.player_click(tile_clicked[0], tile_clicked[1])
 

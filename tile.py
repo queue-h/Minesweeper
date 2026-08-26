@@ -21,7 +21,6 @@ class Tile:
         self.status = 0
         # rectangle object to be drawn in the Game class
         self.screen_x, self.screen_y = self.get_screen_coord()
-        print(self.screen_x)
         self.rect = pygame.Rect(self.screen_x, self.screen_y, self.tile_size, self.tile_size)
         self.true_image = self.blank # just as a placeholder
         self.is_revealed = False

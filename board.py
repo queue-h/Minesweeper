@@ -1,3 +1,6 @@
+import pygame
+from pygame.locals import *
+
 from tile import Tile
 import numpy.random as random
 
@@ -86,7 +89,12 @@ class Board:
     def determine_tile_click(self, x, y):
         for r in range(self.size):
             for c in range(self.size):
-                if self.get_rect(r, c).colliderect(x, y):
+                # it needs a rect to collide with, so we'll just make a point-sized rect
+                mouse_rect = Rect(x, y, x, y)
+                tile_rect = self.matrix[r][c].rect
+                # TODO: fix collision
+                if pygame.Rect.colliderect(mouse_rect, tile_rect):
+                    print(f"r:{r}, c:{c}")
                     return r, c
             else:
                 return None
