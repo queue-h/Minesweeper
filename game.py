@@ -1,18 +1,20 @@
+import tile
 from board import Board
 import sys
 import numpy as np
 import pygame
 from pygame.locals import *
 
+from tile import Tile
+
+
 # a game displays and manipulates a board
 class Game:
-    
-    images = ["/icons/0_zero.png", "/icons/1_one.png", "/icons/2_two.png", "/icons/3_three.png",
-              "/icons/4_four.png", "/icons/5_five.png", "/icons/6_six.png", "/icons/7_seven.png",
-              "/icons/8_eight.png", "/icons/-1_bomb.png"]
+
 
     fps = 60
     fpsClock = pygame.time.Clock()
+    tile_size = tile.Tile.tile_size
 
     def __init__(self, board_size):
         # create new board object
@@ -34,11 +36,10 @@ class Game:
                 self.game = False
             # recursively uncover zeroes
             case 0:
-                pass
-            # uncover number
-            # i don't know what this is supposed to be yet
+                self.board.get_tile(x, y).is_revealed = True
+                self.board.uncover_zeroes(x, y)
             case _:
-                pass
+                self.board.get_tile(x, y).is_revealed = True
 
     def play_game(self):
 
@@ -48,9 +49,13 @@ class Game:
             # draw board
             for r in range(self.board.size):
                 for c in range(self.board.size):
-                    # underlying squares
-                    pygame.draw.rect(self.screen, (255, 255, 255), self.board.get_rect(r, c))
-                    # put text on top
+                    # check if tile has been revealed, then choose appropriate image
+                    if self.board.get_tile(r, c).is_revealed:
+                        image = pygame.transform.scale(self.board.get_image(r, c), (self.tile_size, self.tile_size))
+                        self.screen.blit(image, self.board.get_rect(r, c))
+                    else:
+                        image = pygame.transform.scale(self.board.get_blank(), (self.tile_size, self.tile_size))
+                        self.screen.blit(image, self.board.get_rect(r, c))
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -58,32 +63,17 @@ class Game:
                     sys.exit()
 
             # will check for player click and then pass to method somewhere here
+            left, middle, right = pygame.mouse.get_pressed()
+            if left:
+                tile_clicked = self.board.determine_tile_click(pygame.mouse.get_pos())
+                if tile_clicked is not None:
+                    self.player_click(tile_clicked[0], tile_clicked[1])
 
             # Draw.
 
             pygame.display.flip()
             self.fpsClock.tick(self.fps)
 
-    # flood-fill expose zeroes
-    def uncover_zeroes(self, x, y):
-        if self.board.get_rect(x, y) != 0:
-            return
-        else:
-            self.display_board[x][y] = 0
-        # search up
-        if y - 1 >= 0 and self.display_board[x][y - 1] == '#':
-            self.uncover_zeroes(x, y - 1)
-        # search down
-        if y + 1 < self.board.size and self.display_board[x][y + 1] == '#':
-            self.uncover_zeroes(x, y + 1)
-        # search left
-        if x - 1 >= 0 and self.display_board[x - 1][y] == '#':
-            self.uncover_zeroes(x - 1, y)
-        # search right
-        if x + 1 < self.board.size and self.display_board[x + 1][y] == '#':
-            self.uncover_zeroes(x + 1, y)
-
-    # print board
 
 if __name__ == '__main__':
     g = Game(10)

@@ -8,13 +8,14 @@ class Board:
         if (not isinstance(size, int)) or size == 0:
             raise SyntaxError("Size must be a non-zero integer")
         self.size = size
+        self.buffer = size // 10
 
         self.matrix = [] # put it here instead of in create_tiles so its global
         # populates self.matrix with objects
         self.create_tiles()
 
         # set tile statuses (bomb, number of surrounding bombs)
-        self.bomb_freq = 0.15 # idk
+        self.bomb_freq = 0 # idk
         self.set_statuses()
 
     def create_tiles(self):
@@ -63,15 +64,48 @@ class Board:
                 if random.random() < self.bomb_freq:
                     self.matrix[r][c].set_status(-1)
 
-    # return status of the tile
+    # flood-fill expose zeroes
+    def uncover_zeroes(self, x, y):
+        if self.matrix[x][y].status == -1:
+            return
+        else:
+            self.matrix[x][y].is_revealed = True
+        # search up
+        if y - 1 >= 0 and not self.matrix[x][y - 1].is_revealed:
+            self.uncover_zeroes(x, y - 1)
+        # search down
+        if y + 1 < self.size and not self.matrix[x][y + 1].is_revealed:
+            self.uncover_zeroes(x, y + 1)
+        # search left
+        if x - 1 >= 0 and not self.matrix[x - 1][y].is_revealed:
+            self.uncover_zeroes(x - 1, y)
+        # search right
+        if x + 1 < self.size and not self.matrix[x + 1][y].is_revealed:
+            self.uncover_zeroes(x + 1, y)
+
+    def determine_tile_click(self, x, y):
+        for r in range(self.size):
+            for c in range(self.size):
+                if self.get_rect(r, c).colliderect(x, y):
+                    return r, c
+            else:
+                return None
+
+    # convenience methods
     def get_status(self, r, c):
         return self.matrix[r][c].status
 
     def get_rect(self, r, c):
         return self.matrix[r][c].rect
 
+    def get_image(self, r, c):
+        return self.matrix[r][c].true_image
+
     def get_tile(self, r, c):
         return self.matrix[r][c]
+
+    def get_blank(self):
+        return self.matrix[0][0].blank
 
 
 def main():
