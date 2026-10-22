@@ -18,8 +18,13 @@ class Board:
         self.create_tiles()
 
         # set tile statuses (bomb, number of surrounding bombs)
-        self.bomb_freq = 0 # idk
+        self.bomb_freq = 0.2 # idk
         self.set_statuses()
+
+        for r in range(len(self.matrix)):
+            for c in range(len(self.matrix)):
+             print(self.get_status(r, c), end = " ")
+             print()
 
     def create_tiles(self):
         for r in range(self.size):
@@ -36,11 +41,10 @@ class Board:
         # count number of nearby bombs
         for r in range(self.size):
             for c in range(self.size):
-                # make sure tile is not a bomb
-                if not self.matrix[r][c] == -1:
-                    # placeholder
-                    nearby_bombs = 0
-
+                num_bombs = 0
+                tile = self.matrix[r][c]
+                # make sure is not a bomb
+                if tile.status != -1:
                     # check top right, up, top left, right, left, bottom right, down, bottom left neighbors
                     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
@@ -51,16 +55,18 @@ class Board:
 
                         # check bounds
                         if 0 <= new_row < self.size and 0 <= new_col < self.size:
-                            # check for bomb
-                            if self.matrix[new_row][new_col] == -1:
-                                nearby_bombs += 1 # increment count if there is a bomb
+                            # check new space is a bomb
+                            new_tile = self.matrix[new_row][new_col]
+                            if new_tile.status == -1:
+                                num_bombs += 1 # increment count if there is a bomb
                     # update tile
-                    self.matrix[r][c].set_status(nearby_bombs)
+                    tile.set_status(num_bombs)
 
 
     # set_statuses helper method
     # determine where the bombs are
     def set_bombs(self):
+        num_bombs = 0
         for r in range(self.size):
             for c in range(self.size):
                 # generate a random number, and if it is less than bomb_freq, change tile status to bomb (-1)
@@ -69,10 +75,10 @@ class Board:
 
     # flood-fill expose zeroes
     def uncover_zeroes(self, x, y):
-        if self.matrix[x][y].status == -1:
-            return
-        else:
+        if self.matrix[x][y].status == 0:
             self.matrix[x][y].is_revealed = True
+        else:
+            return
         # search up
         if y - 1 >= 0 and not self.matrix[x][y - 1].is_revealed:
             self.uncover_zeroes(x, y - 1)
@@ -90,14 +96,13 @@ class Board:
         for r in range(self.size):
             for c in range(self.size):
                 # it needs a rect to collide with, so we'll just make a point-sized rect
-                mouse_rect = Rect(x, y, x, y)
+                # this really seems like the wrong solution
+                mouse_rect = Rect(x - 1, y - 1, 2, 2)
                 tile_rect = self.matrix[r][c].rect
-                # TODO: fix collision
+
                 if pygame.Rect.colliderect(mouse_rect, tile_rect):
-                    print(f"r:{r}, c:{c}")
                     return r, c
-            else:
-                return None
+        return None
 
     # convenience methods
     def get_status(self, r, c):
@@ -107,7 +112,10 @@ class Board:
         return self.matrix[r][c].rect
 
     def get_image(self, r, c):
-        return self.matrix[r][c].true_image
+        tile = self.matrix[r][c]
+        if tile.is_revealed:
+            return tile.true_image
+        return tile.blank
 
     def get_tile(self, r, c):
         return self.matrix[r][c]
@@ -116,8 +124,7 @@ class Board:
         return self.matrix[0][0].blank
 
 
-def main():
-    board = Board(8)
 
 if __name__ == '__main__':
-    main()
+    board = Board(8)
+

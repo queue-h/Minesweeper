@@ -1,12 +1,8 @@
-import tile
+from tile import Tile
 from board import Board
 import sys
-import numpy as np
 import pygame
 from pygame.locals import *
-
-from tile import Tile
-
 
 # a game displays and manipulates a board
 class Game:
@@ -14,7 +10,7 @@ class Game:
 
     fps = 60
     fpsClock = pygame.time.Clock()
-    tile_size = tile.Tile.tile_size
+    tile_size = Tile.tile_size
 
     def __init__(self, board_size):
         # create new board object
@@ -41,6 +37,10 @@ class Game:
             case _:
                 self.board.get_tile(x, y).is_revealed = True
 
+    def set_image(self, image, r, c):
+        image = pygame.transform.scale(image, (self.tile_size, self.tile_size))
+        self.screen.blit(image, self.board.get_rect(r, c))
+
     def play_game(self):
 
         while True:
@@ -51,26 +51,27 @@ class Game:
                 for c in range(self.board.size):
                     # check if tile has been revealed, then choose appropriate image
                     if self.board.get_tile(r, c).is_revealed:
-                        image = pygame.transform.scale(self.board.get_image(r, c), (self.tile_size, self.tile_size))
-                        self.screen.blit(image, self.board.get_rect(r, c))
+                        self.set_image(self.board.get_image(r, c), r, c)
                     else:
-                        image = pygame.transform.scale(self.board.get_blank(), (self.tile_size, self.tile_size))
-                        self.screen.blit(image, self.board.get_rect(r, c))
+                        self.set_image(Tile.blank, r, c)
 
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
 
-            # will check for player click and then pass to method somewhere here
-            left, middle, right = pygame.mouse.get_pressed()
-            if left:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                tile_clicked = self.board.determine_tile_click(mouse_x, mouse_y)
-                if tile_clicked is not None:
-                    self.player_click(tile_clicked[0], tile_clicked[1])
+                # handle mouse click
+                if event.type == pygame.MOUSEBUTTONUP:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    tile_clicked = self.board.determine_tile_click(mouse_x, mouse_y)
 
-            # Draw.
+                    if tile_clicked is not None:
+                        # left click means flip tile
+                        if event.button == 1:
+                            self.player_click(tile_clicked[0], tile_clicked[1])
+                        # right click means flag image
+                        if event.button == 3:
+                            self.set_image("flag", tile_clicked[0], tile_clicked[1])
 
             pygame.display.flip()
             self.fpsClock.tick(self.fps)

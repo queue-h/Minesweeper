@@ -22,7 +22,7 @@ class Tile:
         # rectangle object to be drawn in the Game class
         self.screen_x, self.screen_y = self.get_screen_coord()
         self.rect = pygame.Rect(self.screen_x, self.screen_y, self.tile_size, self.tile_size)
-        self.true_image = self.blank # just as a placeholder
+        self.true_image = pygame.image.load(self.icon_list[self.status]) # just as a placeholder
         self.is_revealed = False
 
     def get_screen_coord(self):
@@ -33,3 +33,4 @@ class Tile:
     def set_status(self, status):
         self.status = status
         self.true_image = pygame.image.load(self.icon_list[self.status])
+        print(f"{self.status} {self.icon_list[self.status]}")
